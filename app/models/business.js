@@ -7,11 +7,11 @@ const businessSchema = new mongoose.Schema({
   },
   review: {
     type: String,
-    required: true
+    required: false
   },
   status: {
     type: String,
-    required: false
+    required: true
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
