@@ -14,7 +14,7 @@ const customErrors = require('../../lib/custom_errors')
 const handle404 = customErrors.handle404
 // we'll use this function to send 401 when a user tries to modify a resource
 // that's owned by someone else
-// const requireOwnership = customErrors.requireOwnership
+const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
 // { project: { title: '', text: 'foo' } } -> { project: { text: 'foo' } }
@@ -84,7 +84,7 @@ router.patch('/projects/:id', requireToken, removeBlanks, (req, res, next) => {
     .then(project => {
       // pass the `req` object and the Mongoose record to `requireOwnership`
       // it will throw an error if the current user isn't the owner
-      // requireOwnership(req, project)(everyone that is employee can edit)
+      requireOwnership(req, project)
 
       // pass the result of Mongoose's `.update` to the next `.then`
       return project.updateOne(req.body.project)
@@ -102,7 +102,7 @@ router.delete('/projects/:id', requireToken, (req, res, next) => {
     .then(handle404)
     .then(project => {
       // throw an error if current user doesn't own `project`
-      // requireOwnership(req, project)(everyone that is employee can delete)
+      requireOwnership(req, project)
       // delete the project ONLY IF the above didn't throw
       project.deleteOne()
     })
